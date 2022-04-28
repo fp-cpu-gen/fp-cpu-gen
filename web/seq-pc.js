@@ -202,7 +202,9 @@ async function testFit(instructions){
 }
 
 function write_results(results) {
-  var textArea = document.getElementById("results_div")
+  var textArea = document.getElementById("results_text");
+  textArea.innerHTML = JSON.stringify(results);
+  document.getElementById("results_div").style.visibility = 'visible';
 
 }
 
@@ -212,5 +214,7 @@ async function main(){
     cpu: document.getElementById("cpu").value,
     ratios: ratios,
   }
+  write_results(results)
+
   console.log(results)
 }

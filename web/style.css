@@ -109,7 +109,6 @@ h1{
 }
 
 .pretty_form{
-	font: 95% Arial, Helvetica, sans-serif;
 	max-width: 400px;
 	margin: 0px auto;
 	padding: 16px;
@@ -136,7 +135,6 @@ h1{
 	border: 1px solid #ccc;
 	padding: 3%;
 	color: #555;
-	font: 95% Arial, Helvetica, sans-serif;
 }
 
 .pretty_form input[type="text"]:focus,
@@ -230,7 +228,6 @@ h1{
 }
 
 .pretty_button{
-  font: 95% Arial, Helvetica, sans-serif;
 	max-width: 400px;
 	margin: 0px auto;
 	padding: 16px;

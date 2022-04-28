@@ -94,7 +94,7 @@ function getRandomFloat(max) {
 
 function copy_results() {
   /* Get the text field */
-  var copyText = document.getElementById("results_div");
+  var copyText = document.getElementById("results_text");
 
   /* Select the text field */
   copyText.select();
