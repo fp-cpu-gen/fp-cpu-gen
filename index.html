@@ -1,0 +1,95 @@
+<head>
+  <title>FP-CPU-gen</title>
+  <meta charset="utf-8" />
+
+  <script src="web/clock.js" charset="utf-8"></script>
+  <script src="web/plotly-latest.min.js" charset="utf-8"></script>
+  <script src="web/seq-pc.js" charset="utf-8"></script>
+  <script src="web/math.js" charset="utf-8"></script>
+  <script src="web/utils.js" charset="utf-8"></script>
+  <script src="web/instructions.js" charset="utf-8"></script>
+
+  <link rel="stylesheet" href="web/style.css">
+</head>
+
+<body>
+  <h1>  CPU generation fingerprinting </h1>
+
+
+  <div style="	max-width: 400px;	margin: 0px auto;">
+    This webpage will run JavaScript and WebAssembly benchmarks to gather information about the generation of your CPU.<br>
+    It is designed for the latest version of Firefox, but may also work with Google Chrome.<br>
+    <br>
+    <br>
+    <strong>Instructions:</strong>
+    <ol>
+      <li> Enter the model of your CPU in the box under. You can find information on how to get your cpu model on the FAQ at the bottom of the page.</li>
+      <li> Ensure that no heavy computation is running on your system: other tabs, videos, background processes.</li>
+      <li> Press the "start experiments" button. The experiments can take up to a few minutes. </li>
+      <li> Copy and paste the EXACT content of the result box and mail to <strong> fp.cpu.gen@gmail.com </strong> in a file, for instance results.json </li>
+    </ol>
+  </div>
+
+  <form action= method="get" class='pretty_form'>
+      <input type="text" placeholder="Enter your CPU model" name="cpu" id="cpu" required>
+
+      <input type="submit" value="Start experiments!" />
+
+  </form>
+
+  <br>
+
+
+  <div class="pretty_results" >
+    <textarea id="results_div"></textarea>
+    <button class="copy_button" onClick="copy_results()" style="background: #ffffff; border: none; float: right;" ><img src="icons/copy.png" style="width: 20px; height: 20px"></button>
+  </div>
+
+
+  <br>
+  <br>
+
+
+  <!-- <div style="padding-left: 120px; padding-right: 120px"> -->
+  <div style="	max-width: 400px;	margin: 0px auto;">
+  <button type="button" class="collapsible"> How do I know my CPU model ?</button>
+  <div class="content">
+  For linux user, you can run the following command: <strong> "cat /proc/cpuinfo | grep -m 1 "model name" </strong>.
+  <br>
+  <br>
+  Please copy the whole CPU name, including the frequency. It generally looks like: "Intel(R) Core(TM) i5-8365U CPU @ 1.60GHz".
+
+  <br>
+  <br>
+
+  On windows, you can go in the task manager (Ctrl+Shift+Esc), then to the performance tab.
+  <br> <br>
+  There, you will find  the name of the CPU on the top right corner of the screen.
+  <br> <br>
+  Please copy the whole CPU name, including the frequency. It generally looks like: "Intel(R) Core(TM) i5-8365U CPU @ 1.60GHz".
+  </div>
+
+  <button type="button" class="collapsible"> Why are you running these experiments ?</button>
+  <div class="content">
+    By running these experiments, we try to determine the port usage of WebAssembly instructions in order to determine the generation of your CPU. <br><br>
+    This information could be useful in different attack scenarios and should not be available from the JavaScript sandbox. <br><br>
+    Additionaly, such benchmarks are interesting from a fingerprinting point of view as users can not modify the output to imitate another CPU. <br><br>
+  </div>
+
+  <button type="button" class="collapsible"> What data are stored in your database ? </button>
+  <div class="content">
+    We will only store the data that you send us, i.e. your cpu model as well as timing measurements of port contention instructions.
+    <br>
+    We do not store any personnal information such as name or location. 
+  </div>
+
+  <button type="button" class="collapsible"> Is it dangerous for my computer ? </button>
+  <div class="content">
+    Of course not ! However, as the benchmark is quite computational heavy, it may slow down your computer for a small time, while running the experiments.
+    But as soon as you've closed down the window, everything will be fine.
+  </div>
+</div>
+
+  <script type="text/javascript" src="web/collapsible.js"></script>
+
+</body>
