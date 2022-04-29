@@ -198,6 +198,7 @@ async function testFit(instructions){
     var {pcm, npcm} = await testSeqPCWithClock(clock,instruction_1,instruction_2);
     results[`${instruction_1}_${instruction_2}`] = {"pcm": pcm, "npcm": npcm};
   }
+  clock.worker.terminate()
   return results;
 }
 
