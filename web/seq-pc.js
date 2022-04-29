@@ -213,7 +213,7 @@ async function main(){
   var ratios = await testFit(INSTRUCTIONS);
   results = {
     cpu: document.getElementById("cpu").value,
-    user-agent: window.navigator.userAgent,
+    user_agent: window.navigator.userAgent,
     ratios: ratios,
   }
   write_results(results)
