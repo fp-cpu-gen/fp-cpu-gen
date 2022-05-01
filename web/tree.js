@@ -107,16 +107,19 @@ async function fitInTree(tree) {
   let clock = await initSAB(atomic = true);
   console.log("Warming up");
   await warmUp();
+  results = {}
+  results["ratio"] = {}
   while (!currentNode.isLeaf) {
     instructions = currentNode.key.split("__");
     var pcm_sum = 0;
     var npcm_sum = 0;
-    var rep = 10
-    // for (var i = 0; i < rep; i++) {
+    var rep = 5
+    for (var i = 0; i < rep; i++) {
       var {pcm, npcm} = await testSeqPCWithClock(clock, instructions[0], instructions[1]);
       pcm_sum+=pcm;
       npcm_sum += npcm
-    // }
+    }
+    results["ratio"][currentNode.key] = pcm_sum/npcm_sum
     console.log(pcm_sum/npcm_sum);
     if ((pcm_sum / npcm_sum) < RATIO_THRESHOLD) {
       currentNode = currentNode.children[0];
@@ -125,5 +128,8 @@ async function fitInTree(tree) {
       currentNode = currentNode.children[1];
     }
   }
+  clock.worker.terminate()
   console.log(currentNode.key)
+  results["generation"] = currentNode.key;
+  return results
 }

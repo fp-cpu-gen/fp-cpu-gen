@@ -105,7 +105,7 @@ async function testSeqPC(instruction_1, instruction_2) {
 
 
 async function testSeqPCWithClock(clock, instruction_1, instruction_2) {
-  console.log(`Testing ${instruction_1}_${instruction_2}.wasm`)
+  // console.log(`Testing ${instruction_1}_${instruction_2}.wasm`)
   let {seqPC, seqNoPC} = await initWasm(instruction_1, instruction_2);
   var param = getParam(instruction_1);
   let begin,end;
@@ -127,7 +127,7 @@ async function testSeqPCWithClock(clock, instruction_1, instruction_2) {
   var npcm = math.median(noPCTime)
   // console.log("PC: ", pcm)
   // console.log("No PC: ", npcm)
-  console.log("Ratio: ", pcm / npcm);
+  // console.log("Ratio: ", pcm / npcm);
   return {pcm, npcm}
 }
 
@@ -219,9 +219,10 @@ async function main(){
   //   user_agent: window.navigator.userAgent,
   //   ratios: ratios,
   // }
-  var generation = await fitInTree(decision_tree);
-  console.log(generation);
-  // write_results(results)
+  var results = await fitInTree(decision_tree);
+  results["cpu"] = document.getElementById("cpu").value;
+  results["user_agent"] = window.navigator.userAgent;
+  write_results(results)
 
   // console.log(results)
 }
