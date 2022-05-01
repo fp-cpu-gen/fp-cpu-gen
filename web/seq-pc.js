@@ -8,6 +8,8 @@ const INSTRUCTIONS = [
   ["i16x8.neg", "i16x8.min_u"]
 ]
 
+const RATIO_THRESHOLD = 1.1
+
 
 async function warmUp() {
   let {seqPC, seqNoPC} = await initWasm("i64.ctz","i64.clz");
@@ -209,14 +211,17 @@ function write_results(results) {
 
 }
 
-async function main(){
-  var ratios = await testFit(INSTRUCTIONS);
-  results = {
-    cpu: document.getElementById("cpu").value,
-    user_agent: window.navigator.userAgent,
-    ratios: ratios,
-  }
-  write_results(results)
 
-  console.log(results)
+async function main(){
+  // var ratios = await testFit(INSTRUCTIONS);
+  // results = {
+  //   cpu: document.getElementById("cpu").value,
+  //   user_agent: window.navigator.userAgent,
+  //   ratios: ratios,
+  // }
+  var generation = await fitInTree(decision_tree);
+  console.log(generation);
+  // write_results(results)
+
+  // console.log(results)
 }
