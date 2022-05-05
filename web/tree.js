@@ -123,9 +123,9 @@ async function fitInTree(tree) {
   var currentNode = tree.root;
   let clock = await initSAB(atomic = true);
   console.log("Warming up");
-  await warmUp();
   results = {}
   results["ratio"] = {}
+  await warmUp();
   while (!currentNode.isLeaf) {
     instructions = currentNode.value.split(/\_(?=[if])/g);
     var pcm_sum = 0;

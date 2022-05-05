@@ -13,7 +13,7 @@ const RATIO_THRESHOLD = 1.09
 
 async function warmUp() {
   let {seqPC, seqNoPC} = await initWasm("i64.ctz","i64.clz");
-  for (var i = 0; i < 10;i++) {
+  for (var i = 0; i < 100;i++) {
   seqPC(BigInt(1256456456));
   seqNoPC(BigInt(23415646514));}
 }
