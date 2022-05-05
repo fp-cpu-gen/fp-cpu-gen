@@ -8,7 +8,7 @@ const INSTRUCTIONS = [
   ["i16x8.neg", "i16x8.min_u"]
 ]
 
-const RATIO_THRESHOLD = 1.1
+const RATIO_THRESHOLD = 1.09
 
 
 async function warmUp() {

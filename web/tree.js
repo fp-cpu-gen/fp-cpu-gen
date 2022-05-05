@@ -116,7 +116,8 @@ function createTree(treeData) {
   return decisionTree
 }
 
-const decisionTree = createTree(tree_data)
+const decisionTree = createTree(tree_data);
+
 async function fitInTree(tree) {
   console.log(tree.root)
   var currentNode = tree.root;
@@ -129,15 +130,20 @@ async function fitInTree(tree) {
     instructions = currentNode.value.split(/\_(?=[if])/g);
     var pcm_sum = 0;
     var npcm_sum = 0;
-    var rep = 5
+    var rep = 10
+    pcm_l = []
+    npcm_l = []
     for (var i = 0; i < rep; i++) {
       var {pcm, npcm} = await testSeqPCWithClock(clock, instructions[0], instructions[1]);
       pcm_sum+=pcm;
       npcm_sum += npcm
+      pcm_l.push(pcm);
+      npcm_l.push(npcm)
     }
-    results["ratio"][currentNode.key] = pcm_sum/npcm_sum
-    console.log(pcm_sum/npcm_sum);
-    if ((pcm_sum / npcm_sum) < RATIO_THRESHOLD) {
+    var ratio = math.median(pcm_l)/math.median(npcm_l)
+    results["ratio"][currentNode.key] = ratio
+    console.log(ratio);
+    if (ratio  < RATIO_THRESHOLD) {
       currentNode = currentNode.children[0];
     }
     else {
