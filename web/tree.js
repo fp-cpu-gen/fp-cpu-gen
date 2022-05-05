@@ -72,70 +72,51 @@ class Tree {
 // decision_tree.insert("f64x2.sqrt__f64x2.add", "f64.trunc__f64.copysign");
 // decision_tree.insert("f64x2.sqrt__f64x2.add", ["sandy bridge"]);
 //
-// decision_tree.insert("f64.trunc__f64.copysign", "f64.floor__f64.max");
-// decision_tree.insert("f64.trunc__f64.copysign", "i64.clz__i64.div_u");
-//
-// decision_tree.insert("f64.floor__f64.max", ["haswell"]);
-// decision_tree.insert("f64.floor__f64.max", "i64.popcnt__i64.div_u");
-//
-// decision_tree.insert("i64.clz__i64.div_u", "i64.ctz__i64.rotr");
-// decision_tree.insert("i64.clz__i64.div_u", ["westmere"]);
-//
-// decision_tree.insert("i64.popcnt__i64.div_u", "f64.min__f64.copysign");
-// decision_tree.insert("i64.popcnt__i64.div_u", ["zen"]);
-//
-// decision_tree.insert("i64.ctz__i64.rotr", "f64x2.ceil__f64x2.min");
-// decision_tree.insert("i64.ctz__i64.rotr", ["ivy bridge"]);
-//
-// decision_tree.insert("f64.min__f64.copysign", ["comet lake"]);
-// decision_tree.insert("f64.min__f64.copysign", "i64.ctz__i64.add");
-//
-// decision_tree.insert("f64x2.ceil__f64x2.min", ["broadwell"]);
-// decision_tree.insert("f64x2.ceil__f64x2.min", "f64.abs__f64.min");
-//
-// decision_tree.insert("i64.ctz__i64.add", ["coffee lake"]);
-// decision_tree.insert("i64.ctz__i64.add", ["Zen 3"]);
-//
-// decision_tree.insert("f64.abs__f64.min", ["cascade lake sp"]);
-// decision_tree.insert("f64.abs__f64.min", ["skylake"]);
 
+function createTree(treeData) {
+  var decisionTree = new Tree(0, value = treeData.feature_names[treeData.features[0]]);
 
-const decision_tree = new Tree("f64.min__f64.copysign");
+  for (var i = 0; i < treeData.children_left.length; i++) {
+    if (treeData.children_left[i] != -1) {
+      let children_id = treeData.children_left[i];
+      let children_instructions;
+      if (treeData.features[children_id] == -2) {
+        let generations = [];
+        for (var j = 0; j < treeData.classes[children_id].length; j++) {
+          if (treeData.classes[children_id][j] == 1) {
+            generations.push(treeData.class_names[j]);
+          }
+        }
+        children_instructions=generations
+      }
+      else {
+        children_instructions = treeData.feature_names[treeData.features[children_id]]
+      }
+      decisionTree.insert(i, children_id, children_instructions)
+    }
+    if (treeData.children_right[i] != -1) {
+      let children_id = treeData.children_right[i];
+      let children_instructions;
+      if (treeData.features[children_id] == -2) {
+        let generations = [];
+        for (var j = 0; j < treeData.classes[children_id].length; j++) {
+          if (treeData.classes[children_id][j] == 1) {
+            generations.push(treeData.class_names[j]);
+          }
+        }
+        children_instructions=generations
+      }
+      else {
+        children_instructions = treeData.feature_names[treeData.features[children_id]]
+      }
+      decisionTree.insert(i, children_id, children_instructions)
+    }
+  }
+  console.log(decisionTree);
+  return decisionTree
+}
 
-decision_tree.insert("f64.min__f64.copysign", "f64.div__f64.min");
-decision_tree.insert("f64.min__f64.copysign", "i64.ctz__i64.rotr");
-
-decision_tree.insert("f64.div__f64.min", "f64.trunc__f64.copysign");
-decision_tree.insert("f64.div__f64.min", "i64.clz__i64.sub");
-
-decision_tree.insert("i64.ctz__i64.rotr", "f64x2.floor__f64x2.max");
-decision_tree.insert("i64.ctz__i64.rotr", "zen 3");
-
-decision_tree.insert("f64.trunc__f64.copysign", "i64.ctz__i64.popcnt");
-decision_tree.insert("f64.trunc__f64.copysign", "f64.mul__f64.min");
-
-decision_tree.insert("i64.clz__i64.sub", "f64.div__f64.max");
-decision_tree.insert("i64.clz__i64.sub", "ivy bridge");
-
-decision_tree.insert("f64x2.floor__f64x2.max", "i64.ctz__i64.rem_s");
-decision_tree.insert("f64x2.floor__f64x2.max", "f64.abs__f64.min");
-
-decision_tree.insert("i64.ctz__i64.popcnt", "haswell");
-decision_tree.insert("i64.ctz__i64.popcnt", "sandy bridge");
-
-decision_tree.insert("f64.mul__f64.min", "westmere");
-decision_tree.insert("f64.mul__f64.min", "broadwell");
-
-decision_tree.insert("f64.div__f64.max", "comet lake");
-decision_tree.insert("f64.div__f64.max", "tiger lake");
-
-decision_tree.insert("i64.ctz__i64.rem_s", "coffee lake");
-decision_tree.insert("i64.ctz__i64.rem_s", "zen");
-
-decision_tree.insert("f64.abs__f64.min", "cascade lake sp");
-decision_tree.insert("f64.abs__f64.min", "skylake");
-
-
+const decisionTree = createTree(tree_data)
 async function fitInTree(tree) {
   console.log(tree.root)
   var currentNode = tree.root;
@@ -145,7 +126,7 @@ async function fitInTree(tree) {
   results = {}
   results["ratio"] = {}
   while (!currentNode.isLeaf) {
-    instructions = currentNode.key.split("__");
+    instructions = currentNode.value.split(/\_(?=[if])/g);
     var pcm_sum = 0;
     var npcm_sum = 0;
     var rep = 5
@@ -164,8 +145,7 @@ async function fitInTree(tree) {
     }
   }
   clock.worker.terminate()
-  console.log(currentNode.key)
-  console.log(currentNode)
+  console.log(currentNode.value)
   results["generation"] = currentNode.key;
   return results
 }

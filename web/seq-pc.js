@@ -219,7 +219,7 @@ async function main(){
   //   user_agent: window.navigator.userAgent,
   //   ratios: ratios,
   // }
-  var results = await fitInTree(decision_tree);
+  var results = await fitInTree(decisionTree);
   results["cpu"] = document.getElementById("cpu").value;
   results["user_agent"] = window.navigator.userAgent;
   write_results(results)
