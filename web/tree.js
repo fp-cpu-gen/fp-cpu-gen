@@ -152,6 +152,6 @@ async function fitInTree(tree) {
   }
   clock.worker.terminate()
   console.log(currentNode.value)
-  results["generation"] = currentNode.key;
+  results["generation"] = currentNode.value;
   return results
 }
