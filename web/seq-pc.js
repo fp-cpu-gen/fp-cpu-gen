@@ -188,6 +188,8 @@ async function main(){
   //   user_agent: window.navigator.userAgent,
   //   ratios: ratios,
   // }
+  document.getElementById("computing").style.visibility = 'visible';
+
   var start = performance.now()
   var results_t = await testFit(TESTED_INSTRUCTIONS)
   var end = performance.now()
@@ -197,6 +199,9 @@ async function main(){
   results["user_agent"] = window.navigator.userAgent;
   results["time"] = end - start
   results["ground_truth"] = ""
+  results["classifier"] = 'KNN v0'
+  document.getElementById("computing").style.visibility = 'hidden';
+
   write_results(results)
 
 
