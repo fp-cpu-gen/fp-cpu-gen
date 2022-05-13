@@ -1,13 +1,3 @@
-const INSTRUCTIONS = [
-  ["i64.clz", "i64.mul"],
-  ["f64.nearest", "f64.copysign"],
-  ["i64.clz", "i64.popcnt"],
-  ["f64x2.ceil", "f64x2.min"],
-  ["f64.sqrt", "f64.copysign"],
-  ["i64.clz", "i64.div_s"],
-  ["i16x8.neg", "i16x8.min_u"]
-]
-
 const RATIO_THRESHOLD = 1.07
 
 
@@ -75,56 +65,33 @@ function getParam(instruction_1) {
   return param
 }
 
-async function testSeqPC(instruction_1, instruction_2) {
-  console.log(`Testing ${instruction_1}_${instruction_2}.wasm`)
-  let {seqPC, seqNoPC} = await initWasm(instruction_1, instruction_2);
-  var param = getParam(instruction_1);
-  let clock = await initSAB(atomic = true);
-  let begin,end;
-  PCTime = []
-  noPCTime = []
-
-  for (var i = 0; i <100; i++) {
-    begin = Atomics.load(clock.array,0);
-    seqNoPC(param)
-    end = Atomics.load(clock.array,0);
-    noPCTime.push(end-begin);
-
-    begin = Atomics.load(clock.array,0);
-    seqPC(param)
-    end = Atomics.load(clock.array,0);
-    PCTime.push(end-begin);
-  }
-  var pcm = math.median(PCTime)
-  var npcm = math.median(noPCTime)
-  console.log("PC: ", pcm)
-  console.log("No PC: ", npcm)
-  console.log("Ratio: ", pcm / npcm);
-  return {pcm, npcm}
-}
 
 
 async function testSeqPCWithClock(clock, instruction_1, instruction_2) {
-  // console.log(`Testing ${instruction_1}_${instruction_2}.wasm`)
+  console.log(`Testing ${instruction_1}_${instruction_2}.wasm`)
   let {seqPC, seqNoPC} = await initWasm(instruction_1, instruction_2);
   var param = getParam(instruction_1);
   let begin,end;
   PCTime = []
   noPCTime = []
+  var pcm = []
+  var npcm = []
+  for (var j = 0; j< 10; j++) {
+    for (var i = 0; i <100; i++) {
+      begin = Atomics.load(clock.array,0);
+      seqNoPC(param)
+      end = Atomics.load(clock.array,0);
+      noPCTime.push(end-begin);
 
-  for (var i = 0; i <100; i++) {
-    begin = Atomics.load(clock.array,0);
-    seqNoPC(param)
-    end = Atomics.load(clock.array,0);
-    noPCTime.push(end-begin);
-
-    begin = Atomics.load(clock.array,0);
-    seqPC(param)
-    end = Atomics.load(clock.array,0);
-    PCTime.push(end-begin);
+      begin = Atomics.load(clock.array,0);
+      seqPC(param)
+      end = Atomics.load(clock.array,0);
+      PCTime.push(end-begin);
+    }
+    pcm.push(math.median(PCTime))
+    npcm.push(math.median(noPCTime))
   }
-  var pcm = math.median(PCTime)
-  var npcm = math.median(noPCTime)
+
   // console.log("PC: ", pcm)
   // console.log("No PC: ", npcm)
   // console.log("Ratio: ", pcm / npcm);
@@ -195,8 +162,9 @@ async function testFit(instructions){
   await warmUp();
   results = {}
   for (instruction_pair of instructions) {
-    var instruction_1 = instruction_pair[0];
-    var instruction_2 = instruction_pair[1];
+
+    var instruction_1 = instruction_pair.split(/\_(?=[if])/g)[0];
+    var instruction_2 = instruction_pair.split(/\_(?=[if])/g)[1];
     var {pcm, npcm} = await testSeqPCWithClock(clock,instruction_1,instruction_2);
     results[`${instruction_1}_${instruction_2}`] = {"pcm": pcm, "npcm": npcm};
   }
@@ -212,6 +180,7 @@ function write_results(results) {
 }
 
 
+
 async function main(){
   // var ratios = await testFit(INSTRUCTIONS);
   // results = {
@@ -219,10 +188,17 @@ async function main(){
   //   user_agent: window.navigator.userAgent,
   //   ratios: ratios,
   // }
-  var results = await fitInTree(decisionTree);
+  var start = performance.now()
+  var results_t = await testFit(TESTED_INSTRUCTIONS)
+  var end = performance.now()
+  results = {}
+  results['timings'] = results_t
   results["cpu"] = document.getElementById("cpu").value;
   results["user_agent"] = window.navigator.userAgent;
+  results["time"] = end - start
+  results["ground_truth"] = ""
   write_results(results)
+
 
   // console.log(results)
 }
