@@ -199,7 +199,7 @@ async function testSeqPC_tor(path) {
 
   // for (var i = 0; i <10; i++) {
     begin = performance.now()
-    for (var j = 0; j <10; j++) {
+    for (var j = 0; j <50; j++) {
       seqNoPC(BigInt(101245645646))
     }
     end = performance.now()
