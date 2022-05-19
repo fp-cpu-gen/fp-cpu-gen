@@ -181,6 +181,49 @@ function write_results(results) {
 
 
 
+async function initWasm_tor(path) {
+  const wasm = fetch(path);
+  const {instance} = await WebAssembly.instantiateStreaming(wasm);
+  let seqPC = await instance.exports.seq_pc;
+  let seqNoPC = await instance.exports.seq_nopc;
+  return {seqPC, seqNoPC}
+}
+
+
+async function testSeqPC_tor(path) {
+  console.log(`Testing with ${path} ...`)
+  let {seqPC, seqNoPC} = await initWasm_tor(path);
+  let begin,end;
+  PCTime = []
+  noPCTime = []
+
+  for (var i = 0; i <100; i++) {
+    begin = performance.now()
+    seqNoPC(BigInt(101245645646))
+    end = performance.now()
+    noPCTime.push(end-begin);
+
+    begin = performance.now()
+    seqPC(BigInt(101245645646))
+    end = performance.now()
+    PCTime.push(end-begin);
+  }
+  var pcm = math.median(PCTime)
+  var npcm = math.median(noPCTime)
+  console.log("PC: ", pcm)
+  console.log("No PC: ", npcm)
+  console.log("Ratio: ", pcm / npcm);
+  return {pcm, npcm}
+}
+
+async function testTor() {
+  await testSeqPC_tor('./build/seq-pc_popcnt-or.wasm')
+  await testSeqPC_tor('./build/seq-pc_popcnt-ctz.wasm')
+
+}
+
+
+
 async function main(){
   // var ratios = await testFit(INSTRUCTIONS);
   // results = {
